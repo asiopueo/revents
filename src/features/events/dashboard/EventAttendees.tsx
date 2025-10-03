@@ -1,12 +1,16 @@
-import React from 'react'
+import type { Attendee } from "../../../lib/types"
 
-export default function EventAttendees() {
+type Props = {
+    attendees: Attendee[]
+}
+
+export default function EventAttendees({ attendees }: Props) {
     return (
         <div className='avatar-group -space-x-4'>
-            { Array.from({ length: 5 }).map((_, index) => (
-                <div className="avatar" key={index}>
+            { attendees.map(attendee => (
+                <div className="avatar" key={attendee.id}>
                     <div className='w-12'>
-                        <img src="https://img.daisyui.com/images/profile/demo/spiderperson@192.webp" alt="attendee avatar" />
+                        <img src={attendee.photoURL || '/user.png'} alt="attendee avatar" />
                     </div>
                 </div>
             ))}
