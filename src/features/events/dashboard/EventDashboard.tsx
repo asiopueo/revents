@@ -19,6 +19,16 @@ export function EventDashboard({ formOpen, setFormOpen, formToggle, selectedEven
         setAppEvents(prevState => [...prevState, event]);
     }
 
+    const handleUpdateEvent = (updateEvent: AppEvent) => {
+        setAppEvents(prevState => {
+            return prevState.map(e => e.id === updateEvent.id ? updateEvent : e);
+        });
+    }
+
+    const handleDeleteEvent = (eventId: string) => {
+        setAppEvents(prevState => prevState.filter(e => e.id !== eventId));
+    }
+
     useEffect(() => {
         setAppEvents(events);
 
@@ -42,6 +52,7 @@ export function EventDashboard({ formOpen, setFormOpen, formToggle, selectedEven
                                     formToggle={formToggle}
                                     key={event.id} 
                                     event={event}
+                                    deleteEvent={handleDeleteEvent}
                                 />
                             ))}
                         </div>
@@ -63,6 +74,7 @@ export function EventDashboard({ formOpen, setFormOpen, formToggle, selectedEven
                                 setFormOpen={setFormOpen} 
                                 createEvent={handleCreateEvent}
                                 selectedEvent={selectedEvent}
+                                updateEvent={handleUpdateEvent}
                             /> 
                         </motion.div>
                     )}
