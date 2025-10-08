@@ -1,14 +1,13 @@
 import { users } from "../../../lib/data/sampleData";
-import { useAppDispatch } from "../../../lib/store/store";
+import { useAppDispatch, useAppSelector } from "../../../lib/store/store";
 import type { AppEvent } from "../../../lib/types";
-import { createEvent, updateEvent } from "../eventSlice";
+import { closeForm, createEvent, updateEvent } from "../eventSlice";
 
-type Props = {
-    setFormOpen: (isOpen: boolean) => void;
-    selectedEvent: AppEvent | null;
-}
+export default function EventForm() {
+    const selectedEvent = useAppSelector(state => state.event.selectedEvent);
+    const dispatch = useAppDispatch();
 
-export default function EventForm({ selectedEvent, setFormOpen }: Props) {
+
     const initialValues = selectedEvent ?? {
         title: '',
         category: '',
@@ -20,11 +19,10 @@ export default function EventForm({ selectedEvent, setFormOpen }: Props) {
 
     const onSubmit = (formData: FormData) => {
         const data = Object.fromEntries(formData.entries()) as unknown as AppEvent;
-        const dispatch = useAppDispatch();
         
         if (selectedEvent) {
             dispatch(updateEvent({...selectedEvent, ...data}));
-            setFormOpen(false);
+            dispatch(closeForm());
             return;
         } else {
             dispatch(createEvent({
@@ -38,7 +36,7 @@ export default function EventForm({ selectedEvent, setFormOpen }: Props) {
                     isHost: true,
                 }]
             }));
-            setFormOpen(false);
+            dispatch(closeForm());
         }
 
     }
@@ -56,7 +54,7 @@ export default function EventForm({ selectedEvent, setFormOpen }: Props) {
                 <input defaultValue={initialValues.city} name='city' type="text" className="input input-lg w-full" placeholder="City" />
                 <input defaultValue={initialValues.venue} name='venue' type="text" className="input input-lg w-full" placeholder="Venue" />
                 <div className="flex justify-end w-full gap-3">
-                    <button type="button" onClick={() => setFormOpen(false)} className="btn btn-neutral">Cancel</button>
+                    <button type="button" onClick={() => dispatch(closeForm())} className="btn btn-neutral">Cancel</button>
                     <button type="submit" className="btn btn-primary">Submit</button>
                 </div>
             </form>

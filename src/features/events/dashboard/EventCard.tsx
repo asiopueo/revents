@@ -1,14 +1,13 @@
 import { useAppDispatch } from "../../../lib/store/store";
 import type { AppEvent } from "../../../lib/types";
-import { deleteEvent } from "../eventSlice";
+import { deleteEvent, toggleForm } from "../eventSlice";
 import EventAttendees from "./EventAttendees";
 
 type Props = {
     event: AppEvent;
-    formToggle: (event: AppEvent | null) => void; // null not strictly necessary
 }
 
-export default function EventCard({ event, formToggle }: Props) {
+export default function EventCard({ event }: Props) {
     const host = event.attendees.find(x => x.id === event.hostUid);
     const dispatch = useAppDispatch();
 
@@ -34,7 +33,7 @@ export default function EventCard({ event, formToggle }: Props) {
                         { event.description }
                     </div>
                     <button onClick={() => dispatch(deleteEvent(event.id))} className="btn btn-error">Delete</button>
-                    <button onClick={() => formToggle(event)} className="btn btn-primary">View</button>
+                    <button onClick={() => dispatch(toggleForm(event))} className="btn btn-primary">View</button>
                 </div>
             </div>
         </div>

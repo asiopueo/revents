@@ -1,23 +1,16 @@
 import { useEffect } from "react";
-import { events } from "../../../lib/data/sampleData";
+
 import EventForm from "../form/EventForm";
 import EventCard from "./EventCard";
-import type { AppEvent } from "../../../lib/types";
 import { AnimatePresence, motion } from "motion/react";
 import Counter from "../../counter/Counter";
 import { useAppDispatch, useAppSelector } from "../../../lib/store/store";
 import { setEvents } from "../eventSlice";
+import { events } from "../../../lib/data/sampleData";
 
-type Props = {
-    formOpen: boolean;
-    setFormOpen: (isOpen: boolean) => void;
-    formToggle: (event: AppEvent | null) => void;
-    selectedEvent: AppEvent | null;
-}
-
-export function EventDashboard({ formOpen, setFormOpen, formToggle, selectedEvent }: Props) {
+export function EventDashboard() {
     const dispatch = useAppDispatch();
-    const appEvents = useAppSelector(state => state.event.events);
+    const { events: appEvents, selectedEvent, formOpen } = useAppSelector(state => state.event);
     
     useEffect(() => {
         dispatch(setEvents(events));
@@ -35,7 +28,6 @@ export function EventDashboard({ formOpen, setFormOpen, formToggle, selectedEven
                         <div className="flex flex-col gap-4">
                             {appEvents.map(event => (
                                 <EventCard 
-                                    formToggle={formToggle}
                                     key={event.id} 
                                     event={event}
                                 />
@@ -55,11 +47,7 @@ export function EventDashboard({ formOpen, setFormOpen, formToggle, selectedEven
                             exit={{ opacity: 0, x: 200 }}
                             transition={{ duration: 0.3, type: 'tween' }}
                         >
-                            <EventForm
-                                key={selectedEvent?.id || 'new'}
-                                setFormOpen={setFormOpen} 
-                                selectedEvent={selectedEvent}
-                            /> 
+                            <EventForm key={selectedEvent?.id || 'new'} /> 
                         </motion.div>
                     ) : (
                         <motion.div
