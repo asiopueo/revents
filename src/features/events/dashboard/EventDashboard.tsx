@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { events } from "../../../lib/data/sampleData";
 import EventForm from "../form/EventForm";
 import EventCard from "./EventCard";
 import type { AppEvent } from "../../../lib/types";
 import { AnimatePresence, motion } from "motion/react";
+import Counter from "../../counter/Counter";
+import { useAppDispatch, useAppSelector } from "../../../lib/store/store";
+import { setEvents } from "../eventSlice";
 
 type Props = {
     formOpen: boolean;
@@ -13,29 +16,12 @@ type Props = {
 }
 
 export function EventDashboard({ formOpen, setFormOpen, formToggle, selectedEvent }: Props) {
-    const [appEvents, setAppEvents] = useState<AppEvent[]>([]);
+    const dispatch = useAppDispatch();
+    const appEvents = useAppSelector(state => state.event.events);
     
-    const handleCreateEvent = (event: AppEvent) => {
-        setAppEvents(prevState => [...prevState, event]);
-    }
-
-    const handleUpdateEvent = (updateEvent: AppEvent) => {
-        setAppEvents(prevState => {
-            return prevState.map(e => e.id === updateEvent.id ? updateEvent : e);
-        });
-    }
-
-    const handleDeleteEvent = (eventId: string) => {
-        setAppEvents(prevState => prevState.filter(e => e.id !== eventId));
-    }
-
     useEffect(() => {
-        setAppEvents(events);
-
-        return () => {
-            setAppEvents([]);
-        }
-    }, [])
+        dispatch(setEvents(events));
+    }, []) // dispatch as dependency?
 
     return (
         <div className="flex flex-row w-full gap-6">
@@ -52,7 +38,6 @@ export function EventDashboard({ formOpen, setFormOpen, formToggle, selectedEven
                                     formToggle={formToggle}
                                     key={event.id} 
                                     event={event}
-                                    deleteEvent={handleDeleteEvent}
                                 />
                             ))}
                         </div>
@@ -61,9 +46,10 @@ export function EventDashboard({ formOpen, setFormOpen, formToggle, selectedEven
             </div>
 
             <div className="w-2/5">
-                <AnimatePresence>
-                    { formOpen && (
+                <AnimatePresence mode="wait">
+                    { formOpen ? (
                         <motion.div
+                            key='counter'
                             initial={{ opacity: 0, x: 200 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: 200 }}
@@ -72,10 +58,17 @@ export function EventDashboard({ formOpen, setFormOpen, formToggle, selectedEven
                             <EventForm
                                 key={selectedEvent?.id || 'new'}
                                 setFormOpen={setFormOpen} 
-                                createEvent={handleCreateEvent}
                                 selectedEvent={selectedEvent}
-                                updateEvent={handleUpdateEvent}
                             /> 
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            initial={{ opacity: 0, x: 200 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 200 }}
+                            transition={{ duration: 0.3, type: 'tween' }}
+                        >
+                            <Counter />
                         </motion.div>
                     )}
                 </AnimatePresence>
