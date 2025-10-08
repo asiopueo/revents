@@ -1,3 +1,4 @@
+import { Outlet } from "react-router"
 import { EventDashboard } from "../../features/events/dashboard/EventDashboard"
 import Navbar from "./Navbar"
 
@@ -7,7 +8,7 @@ export default function App() {
         <div>
             <Navbar />
             <div className="container mx-auto px-10 mt-24">
-                <EventDashboard />
+                <Outlet />
             </div>
         </div>
     )
