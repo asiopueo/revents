@@ -1,13 +1,22 @@
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import UserMenu from "./UserMenu";
+import { useAppDispatch, useAppSelector } from "../../../lib/store/store";
+import { signIn } from "../../../features/account/accountSlice";
 
 export default function Navbar() {
-    const loggedIn = true;
+    const navigate = useNavigate();
+    const user = useAppSelector(state => state.account.user);
+    const dispatch = useAppDispatch();
+
+    const handleSignIn = () => {
+        dispatch(signIn());
+        navigate('/events');
+    }
 
     return (
-        <header className="p-3 w-full fixed top-0 z-50 bg-gradient-to-r from-primary to-black">
+        <header className="px-3 w-full fixed top-0 z-50 bg-gradient-to-r from-primary to-black">
             <div className="flex align-middle items-center px-10 mx-auto gap-6 cursor-pointer">
-                <div className="max-h-16 text-white flex items-center gap-3 border-r-white border-r-2 pr-6">
+                <div className="h-16 text-white flex items-center gap-3 border-r-white border-r-2 pr-6">
                     <NavLink to="/" className="text-2xl font-semibold text-white uppercase">
                         Re-vents
                     </NavLink>
@@ -17,11 +26,11 @@ export default function Navbar() {
                     <NavLink to='/createEvent'>Create</NavLink>
                 </nav>
                 <div className="flex align-middle ml-auto gap-3">
-                    {loggedIn ? (
+                    {user ? (
                         <UserMenu />
                     ) : (
                         <>
-                            <button className='btn'>Login</button>
+                            <button onClick={handleSignIn} className='btn'>Login</button>
                             <button className='btn'>Register</button>
                         </>
                     )}
