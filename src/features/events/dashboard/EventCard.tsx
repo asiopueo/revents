@@ -1,6 +1,5 @@
-import { useAppDispatch } from "../../../lib/store/store";
+import { Link } from "react-router";
 import type { AppEvent } from "../../../lib/types";
-import { deleteEvent, toggleForm } from "../eventSlice";
 import EventAttendees from "./EventAttendees";
 
 type Props = {
@@ -9,7 +8,6 @@ type Props = {
 
 export default function EventCard({ event }: Props) {
     const host = event.attendees.find(x => x.id === event.hostUid);
-    const dispatch = useAppDispatch();
 
     return (
         <div className="card bg-base-100 w-full gap-6">
@@ -32,8 +30,7 @@ export default function EventCard({ event }: Props) {
                     <div className="flex flex-1">
                         { event.description }
                     </div>
-                    <button onClick={() => dispatch(deleteEvent(event.id))} className="btn btn-error">Delete</button>
-                    <button onClick={() => dispatch(toggleForm(event))} className="btn btn-primary">View</button>
+                    <Link to={`/events/${event.id}`} className="btn btn-primary">View</Link>
                 </div>
             </div>
         </div>
