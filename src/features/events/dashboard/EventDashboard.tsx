@@ -1,19 +1,11 @@
-import { useEffect } from "react";
 
 import EventCard from "./EventCard";
 import Counter from "../../counter/Counter";
-import { useAppDispatch, useAppSelector } from "../../../lib/store/store";
-import { setEvents } from "../eventSlice";
-import { events } from "../../../lib/data/sampleData";
+import { useAppSelector } from "../../../lib/store/store";
 
 export function EventDashboard() {
-    const dispatch = useAppDispatch();
     const { events: appEvents } = useAppSelector(state => state.event);
     
-    useEffect(() => {
-        dispatch(setEvents(events));
-    }, []) // dispatch as dependency?
-
     return (
         <div className="flex flex-row w-full gap-6">
             <div className="w-3/5">

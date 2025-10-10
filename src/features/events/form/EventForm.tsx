@@ -1,7 +1,7 @@
 import { users } from "../../../lib/data/sampleData";
 import { useAppDispatch, useAppSelector } from "../../../lib/store/store";
 import type { AppEvent } from "../../../lib/types";
-import { closeForm, createEvent, updateEvent } from "../eventSlice";
+import { createEvent, updateEvent } from "../eventSlice";
 
 export default function EventForm() {
     const selectedEvent = useAppSelector(state => state.event.selectedEvent);
@@ -22,7 +22,6 @@ export default function EventForm() {
         
         if (selectedEvent) {
             dispatch(updateEvent({...selectedEvent, ...data}));
-            dispatch(closeForm());
             return;
         } else {
             dispatch(createEvent({
@@ -36,7 +35,6 @@ export default function EventForm() {
                     isHost: true,
                 }]
             }));
-            dispatch(closeForm());
         }
 
     }
@@ -54,7 +52,7 @@ export default function EventForm() {
                 <input defaultValue={initialValues.city} name='city' type="text" className="input input-lg w-full" placeholder="City" />
                 <input defaultValue={initialValues.venue} name='venue' type="text" className="input input-lg w-full" placeholder="Venue" />
                 <div className="flex justify-end w-full gap-3">
-                    <button type="button" onClick={() => dispatch(closeForm())} className="btn btn-neutral">Cancel</button>
+                    <button type="button" className="btn btn-neutral">Cancel</button>
                     <button type="submit" className="btn btn-primary">Submit</button>
                 </div>
             </form>
