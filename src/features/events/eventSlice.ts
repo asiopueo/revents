@@ -25,7 +25,7 @@ export const eventSlice = createSlice({
             state.events.push(action.payload);
         },
         updateEvent: (state, action: PayloadAction<AppEvent>) => {
-            state.events.map(e => e.id === action.payload.id ? action.payload : e);
+            state.events = state.events.map(e => e.id === action.payload.id ? action.payload : e);
         },
         deleteEvent: (state, action: PayloadAction<string>) => {
             state.events = state.events.filter(e => e.id !== action.payload);
