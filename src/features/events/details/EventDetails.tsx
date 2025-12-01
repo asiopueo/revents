@@ -9,8 +9,8 @@ import { useEffect } from "react";
 
 export default function EventDetails() {
     const dispatch = useAppDispatch();
-    const { id } = useParams<{ id: string}>();
-
+    const { id } = useParams<{ id: string }>();
+    
     useEffect(() => {
         if (id) {
             dispatch(selectEvent(id));
