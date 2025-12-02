@@ -7,15 +7,14 @@ import { useParams } from "react-router";
 import { useEffect } from "react";
 import { selectEvent } from '../eventSlice';
 import { useForm, type FieldValues } from 'react-hook-form';
-import { required } from "zod/v4-mini";
-import UncontrolledInput from "../../../app/shared/components/UncontrolledInput";
+import TextInput from "../../../app/shared/components/TextInput";
 
 export default function EventForm() {
     const { id } = useParams<{ id: string }>();
     const dispatch = useAppDispatch();
     const selectedEvent = useAppSelector(state => state.event.selectedEvent);
     const navigate = useNavigate();
-    const { register, handleSubmit, reset, formState: { errors, isValid },  } = useForm({
+    const { register, control, handleSubmit, reset, formState: { isValid }} = useForm({
         mode: 'onTouched',
         defaultValues: {
             title: '',
@@ -71,12 +70,11 @@ export default function EventForm() {
                 {selectedEvent ? "Edit event" : "Create new event"}
             </h3>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 w-full">
-                <UncontrolledInput 
-                    register={register}
+                <TextInput 
+                    control={control}
                     name='title'
-                    errors={errors}
-                    options={{ required: 'Title is required'}}
                     label='Title'
+                    rules={{ required: 'Title is required' }}
                 />
                 <input  
                     {...register('category')} 
