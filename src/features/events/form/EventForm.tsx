@@ -8,13 +8,15 @@ import { useEffect } from "react";
 import { selectEvent } from '../eventSlice';
 import { useForm, type FieldValues } from 'react-hook-form';
 import { required } from "zod/v4-mini";
+import UncontrolledInput from "../../../app/shared/components/UncontrolledInput";
 
 export default function EventForm() {
     const { id } = useParams<{ id: string }>();
     const dispatch = useAppDispatch();
     const selectedEvent = useAppSelector(state => state.event.selectedEvent);
     const navigate = useNavigate();
-    const { register, handleSubmit, reset, formState: { errors, isValid } } = useForm({
+    const { register, handleSubmit, reset, formState: { errors, isValid },  } = useForm({
+        mode: 'onTouched',
         defaultValues: {
             title: '',
             category: '',
@@ -69,15 +71,37 @@ export default function EventForm() {
                 {selectedEvent ? "Edit event" : "Create new event"}
             </h3>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 w-full">
-                <input {...register('title', {required: 'Title is required'})} type="text" className="input input-lg w-full" placeholder="Event title" />
-                <input  {...register('category')} type="text" className="input input-lg w-full" placeholder="Category" />
-                <textarea  {...register('description')} className="text-area textarea-lg w-full" placeholder="Description" />
-                <input {...register('date')} name='date' type="datetime-local" className="input input-lg w-full" placeholder="Date" />
-                <input {...register('city')} name='city' type="text" className="input input-lg w-full" placeholder="City" />
-                <input {...register('venue')} name='venue' type="text" className="input input-lg w-full" placeholder="Venue" />
+                <UncontrolledInput 
+                    register={register}
+                    name='title'
+                    errors={errors}
+                    options={{ required: 'Title is required'}}
+                    label='Title'
+                />
+                <input  
+                    {...register('category')} 
+                    type="text" 
+                    className="input input-lg w-full" 
+                    placeholder="Category" />
+                <textarea  {...register('description')} 
+                    className="text-area textarea-lg w-full" 
+                    placeholder="Description" />
+                <input {...register('date')} 
+                    name='date' type="datetime-local" 
+                    className="input input-lg w-full" 
+                    placeholder="Date" />
+                <input {...register('city')} 
+                    name='city' type="text" 
+                    className="input input-lg w-full" 
+                    placeholder="City" />
+                <input {...register('venue')} 
+                    name='venue' 
+                    type="text" 
+                    className="input input-lg w-full" 
+                    placeholder="Venue" />
                 <div className="flex justify-end w-full gap-3">
                     <button onClick={() => navigate(-1)} type="button" className="btn btn-neutral">Cancel</button>
-                    <button type="submit" disabled={!isValid} className="btn btn-primary">Submit</button>
+                    <button type="submit" disabled={isValid} className="btn btn-primary">Submit</button>
                 </div>
             </form>
         </div>
