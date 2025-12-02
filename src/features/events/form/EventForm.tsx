@@ -93,6 +93,7 @@ export default function EventForm() {
                     name='date'
                     label='Date'
                     type='datetime-local'
+                    min={new Date()}
                 />
                 <TextInput 
                     control={control}
