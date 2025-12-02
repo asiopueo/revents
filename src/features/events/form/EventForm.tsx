@@ -8,14 +8,17 @@ import { useEffect } from "react";
 import { selectEvent } from '../eventSlice';
 import { useForm, type FieldValues } from 'react-hook-form';
 import TextInput from "../../../app/shared/components/TextInput";
+import { eventFormSchema, type EventFormSchema } from "../../../lib/schemas/eventFormSchema";
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export default function EventForm() {
     const { id } = useParams<{ id: string }>();
     const dispatch = useAppDispatch();
     const selectedEvent = useAppSelector(state => state.event.selectedEvent);
     const navigate = useNavigate();
-    const { register, control, handleSubmit, reset, formState: { isValid }} = useForm({
+    const { control, handleSubmit, reset, formState: { isValid }} = useForm<EventFormSchema>({
         mode: 'onTouched',
+        resolver: zodResolver(eventFormSchema),
         defaultValues: {
             title: '',
             category: '',
@@ -74,29 +77,33 @@ export default function EventForm() {
                     control={control}
                     name='title'
                     label='Title'
-                    rules={{ required: 'Title is required' }}
                 />
-                <input  
-                    {...register('category')} 
-                    type="text" 
-                    className="input input-lg w-full" 
-                    placeholder="Category" />
-                <textarea  {...register('description')} 
-                    className="text-area textarea-lg w-full" 
-                    placeholder="Description" />
-                <input {...register('date')} 
-                    name='date' type="datetime-local" 
-                    className="input input-lg w-full" 
-                    placeholder="Date" />
-                <input {...register('city')} 
-                    name='city' type="text" 
-                    className="input input-lg w-full" 
-                    placeholder="City" />
-                <input {...register('venue')} 
-                    name='venue' 
-                    type="text" 
-                    className="input input-lg w-full" 
-                    placeholder="Venue" />
+                <TextInput 
+                    control={control}
+                    name='category'
+                    label='Category'
+                />
+                <TextInput 
+                    control={control}
+                    name='description'
+                    label='Description'
+                />
+                <TextInput 
+                    control={control}
+                    name='date'
+                    label='Date'
+                    type='datetime-local'
+                />
+                <TextInput 
+                    control={control}
+                    name='city'
+                    label='City'
+                />
+                <TextInput 
+                    control={control}
+                    name='venue'
+                    label='Venue'
+                />
                 <div className="flex justify-end w-full gap-3">
                     <button onClick={() => navigate(-1)} type="button" className="btn btn-neutral">Cancel</button>
                     <button type="submit" disabled={isValid} className="btn btn-primary">Submit</button>
