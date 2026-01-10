@@ -10,6 +10,9 @@ import { useForm, type FieldValues } from 'react-hook-form';
 import TextInput from "../../../app/shared/components/TextInput";
 import { eventFormSchema, type EventFormSchema } from "../../../lib/schemas/eventFormSchema";
 import { zodResolver } from '@hookform/resolvers/zod';
+import TextArea from "../../../app/shared/components/TextArea";
+import SelectInput from "../../../app/shared/components/SelectInput";
+import { categoryOptions } from "./categoryOptions";
 
 export default function EventForm() {
     const { id } = useParams<{ id: string }>();
@@ -78,15 +81,17 @@ export default function EventForm() {
                     name='title'
                     label='Title'
                 />
-                <TextInput 
+                <SelectInput 
                     control={control}
                     name='category'
                     label='Category'
+                    options={categoryOptions}
                 />
-                <TextInput 
+                <TextArea 
                     control={control}
                     name='description'
                     label='Description'
+                    rows={3}
                 />
                 <TextInput 
                     control={control}
