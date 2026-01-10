@@ -22,15 +22,7 @@ export default function EventForm() {
     const navigate = useNavigate();
     const { control, handleSubmit, reset, formState: { isValid }} = useForm<EventFormSchema>({
         mode: 'onTouched',
-        resolver: zodResolver(eventFormSchema),
-        defaultValues: {
-            title: '',
-            category: '',
-            description: '',
-            date: '',
-            city: '',
-            venue: ''
-        }
+        resolver: zodResolver(eventFormSchema)
     });
 
     useEffect(() => {
@@ -40,6 +32,11 @@ export default function EventForm() {
                 reset({
                     ...selectedEvent,
                     date: new Date(selectedEvent.date).toISOString().slice(0, 16),
+                    venue: {
+                        venue: selectedEvent.venue,
+                        latitude: selectedEvent.latitude,
+                        longitude: selectedEvent.longitude
+                    }
                 });
             }
         }  else {
@@ -49,13 +46,22 @@ export default function EventForm() {
 
     const onSubmit = (data: FieldValues) => {
         if (selectedEvent) {
-            dispatch(updateEvent({...selectedEvent, ...data}));
+            dispatch(updateEvent({
+                ...selectedEvent, 
+                ...data,
+                venue: data.venue.venue,
+                latitude: data.venue.latitude,
+                longitude: data.venue.longitude
+            }));
             navigate(`/events/${selectedEvent.id}`);
             return;
         } else {
             const id = crypto.randomUUID();
             const newEvent = {
                 ...data,
+                venue: data.venue.venue,
+                latitude: data.venue.latitude,
+                longitude: data.venue.longitude,
                 id: id,
                 hostUid: users[0].uid,
                 attendees: [{
@@ -76,17 +82,11 @@ export default function EventForm() {
             <h3 className="text-2xl font-semibold text-center text-primary">
                 {selectedEvent ? "Edit event" : "Create new event"}
             </h3>
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 w-full">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 w-full">
                 <TextInput 
                     control={control}
                     name='title'
                     label='Title'
-                />
-                <SelectInput 
-                    control={control}
-                    name='category'
-                    label='Category'
-                    options={categoryOptions}
                 />
                 <TextArea 
                     control={control}
@@ -94,13 +94,22 @@ export default function EventForm() {
                     label='Description'
                     rows={3}
                 />
-                <TextInput 
-                    control={control}
-                    name='date'
-                    label='Date'
-                    type='datetime-local'
-                    min={new Date()}
-                />
+                <div className="flex gap-3 items-center w-full">
+                    <TextInput 
+                        control={control}
+                        name='date'
+                        label='Date'
+                        type='datetime-local'
+                        min={new Date()}
+                    />
+                    <SelectInput 
+                        control={control}
+                        name='category'
+                        label='Category'
+                        options={categoryOptions}
+                    />
+                </div>
+
                 <PlaceInput 
                     control={control}
                     name='venue'
@@ -108,7 +117,7 @@ export default function EventForm() {
                 />
                 <div className="flex justify-end w-full gap-3">
                     <button onClick={() => navigate(-1)} type="button" className="btn btn-neutral">Cancel</button>
-                    <button type="submit" disabled={isValid} className="btn btn-primary">Submit</button>
+                    <button type="submit" disabled={!isValid} className="btn btn-primary">Submit</button>
                 </div>
             </form>
         </div>

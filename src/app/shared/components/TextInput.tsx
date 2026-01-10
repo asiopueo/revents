@@ -13,7 +13,7 @@ export default function TextInput<T extends FieldValues>(props: Props<T>) {
     const minDate = props.min?.toISOString().slice(0, 16);
 
     return (
-        <label className="floating-label text-left">
+        <label className="floating-label text-left w-full">
             <span>{props.label}</span>
             <input 
                 {...field}

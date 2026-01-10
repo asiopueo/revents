@@ -1,8 +1,8 @@
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useController, type FieldValues, type UseControllerProps } from 'react-hook-form';
 import type { Suggestion } from '../../../lib/types';
-import { DivideIcon } from '@heroicons/react/24/outline';
+import { debounce } from '../../../lib/util/util';
 
 type Props<T extends FieldValues> = {
     type?: string;
@@ -13,10 +13,19 @@ export default function PlaceInput<T extends FieldValues>(props: Props<T>) {
     const {field, fieldState} = useController({...props});
     const [loading, setLoading] = useState(false);
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+    const [inputValue, setInputValue] = useState(field.value || '');
+
+    useEffect(() => {
+        if (field.value && typeof field.value === 'object') {
+            setInputValue(field.value.venue);
+        } else {
+            setInputValue(field.value || '');
+        }
+    }, [field.value]);
 
     const locationUrl = 'https://api.locationiq.com/v1/autocomplete?dedupe=1&limit=6&key=pk.1f966d8efdb3e751d5b3375eaeb3a613'
 
-    const fetchSuggestions = async (query: string) => {
+    const fetchSuggestions = useMemo(() => debounce(async (query: string) => {
         if (!query || query.length < 3) {
             setSuggestions([]);
             return;
@@ -31,11 +40,21 @@ export default function PlaceInput<T extends FieldValues>(props: Props<T>) {
         } finally {
             setLoading(false);
         }
-    }
+    }, 1000), [locationUrl]);
 
     const handleChange = async (value: string) => {
-        field.onChange(value);
+        setInputValue(value);
+        field.onChange({venue: value});
         await fetchSuggestions(value);
+    }
+
+    const handleSelect = async (location: Suggestion) => {
+        const venue = location.display_name;
+        const city = location.address.city;
+        const latitude = parseFloat(location.lat);
+        const longitude = parseFloat(location.lon);
+        field.onChange({venue, city, latitude, longitude});
+        setSuggestions([]);
     }
 
     return (
@@ -43,7 +62,7 @@ export default function PlaceInput<T extends FieldValues>(props: Props<T>) {
             <span>{props.label}</span>
             <input 
                 {...field}
-                value={field.value ?? ''}
+                value={inputValue}
                 onChange={e => handleChange(e.target.value)}
                 type={props.type}
                 className={clsx('input input-lg w-full', {
@@ -54,11 +73,12 @@ export default function PlaceInput<T extends FieldValues>(props: Props<T>) {
 
             {loading && <div>Loading...</div>}
             {suggestions.length > 0 && (
-                <ul>
+                <ul className='list rounded-box p-1 shadow-md'>
                     {suggestions.map(suggestion => (
                         <li 
                             key={suggestion.place_id}
-                            onClick={() => field.onChange(suggestion.display_name)}
+                            onClick={() => handleSelect(suggestion)}
+                            className='list-row p-1 cursor-pointer hover:bg-base-300'
                         >
                             {suggestion.display_name}
                         </li>

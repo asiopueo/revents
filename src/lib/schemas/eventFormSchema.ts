@@ -2,6 +2,12 @@ import {z} from 'zod';
 
 const requiredString = (fieldName: string) => z.string().min(1, `${fieldName} is required`);
 
+const venueSchema = z.object({
+    venue: requiredString('Venue'),
+    latitude: z.number('Latitude is required'),
+    longitude: z.number('Longitude is required')
+})
+
 export const eventFormSchema = z.object({
     title: requiredString('Title'),
     category: requiredString('Category'),
@@ -13,8 +19,8 @@ export const eventFormSchema = z.object({
         }, {   
             message: 'Date must be in the future'
         }),
-    city: requiredString('City'),
-    venue: requiredString('Venue')
+    city: z.string().optional(),
+    venue: venueSchema
 });
 
 export type EventFormSchema = z.infer<typeof eventFormSchema>;
