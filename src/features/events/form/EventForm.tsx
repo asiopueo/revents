@@ -13,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import TextArea from "../../../app/shared/components/TextArea";
 import SelectInput from "../../../app/shared/components/SelectInput";
 import { categoryOptions } from "./categoryOptions";
+import PlaceInput from "../../../app/shared/components/PlaceInput";
 
 export default function EventForm() {
     const { id } = useParams<{ id: string }>();
@@ -100,12 +101,7 @@ export default function EventForm() {
                     type='datetime-local'
                     min={new Date()}
                 />
-                <TextInput 
-                    control={control}
-                    name='city'
-                    label='City'
-                />
-                <TextInput 
+                <PlaceInput 
                     control={control}
                     name='venue'
                     label='Venue'
