@@ -7,6 +7,7 @@ import { users } from "../../lib/data/sampleData";
 import { signIn } from "./accountSlice";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import TextInput from "../../app/shared/components/TextInput";
+import { toast } from "react-toastify";
 
 export default function LoginForm() {
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ export default function LoginForm() {
             dispatch(signIn(user));
             navigate('/events');
         } else {
-            alert('Invalid email or password');
+            toast.error('Invalid email or password');
         }
     }
     
