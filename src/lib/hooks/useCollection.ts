@@ -4,6 +4,7 @@ import { useCallback, useSyncExternalStore } from "react";
 import { setCollections, setError, setLoading } from "../firebase/firestoreSlice";
 import { db } from "../firebase/firebase";
 import { toast } from "react-toastify";
+import { convertTimestamps } from "../util/util";
 
 type Options = {
     path: string;
@@ -24,7 +25,8 @@ export const useCollection = <T extends DocumentData>({path, listen = true}: Opt
         const unsubscribe = onSnapshot(colRef, (snapshot) => {
             const data: T[] = [];
             snapshot.forEach((doc) => {
-                data.push({id: doc.id, ...doc.data() as T});
+                const converted = convertTimestamps(doc.data() as T);
+                data.push({id: doc.id, ...converted as T});
             });
             dispatch(setCollections({path , data}));
             dispatch(setLoading(false));

@@ -1,8 +1,10 @@
+import { Timestamp } from "firebase/firestore";
+
 export function debounce<T extends unknown[], U>(
     callback: (...args: T) => PromiseLike<U> | U,
     wait: number
- ) {
-    let timer: number;
+) {
+    let timer: ReturnType<typeof setTimeout>;
 
     return (...args: T): Promise<U> => {
         clearTimeout(timer);
@@ -10,4 +12,18 @@ export function debounce<T extends unknown[], U>(
             timer = setTimeout(() => resolve(callback(...args)), wait);
         })
     }
- }
+}
+
+export const convertTimestamps = (data: unknown): unknown => {
+    if (Array.isArray(data)) {
+        return data.map(convertTimestamps);
+    } else if (data instanceof Timestamp) {
+        return data.toDate().toISOString();
+    } else if (data && typeof data === 'object') {
+        return Object.fromEntries(
+            Object.entries(data).map(([key, value]) => [key, convertTimestamps(value)])
+        );
+    } else {
+        return data;
+    }
+}
