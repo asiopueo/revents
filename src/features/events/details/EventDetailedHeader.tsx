@@ -1,11 +1,7 @@
 import { Link } from "react-router";
-import { useAppSelector } from "../../../lib/store/store"
+import type { AppEvent } from "../../../lib/types";
 
-export default function EventDetailedHeader() {
-    const event = useAppSelector(state => state.event.selectedEvent);
-    
-    if (!event) return <div>Event not found</div>
-    
+export default function EventDetailedHeader({event}: {event: AppEvent}) {
     const host = event.attendees.find(x => x.id === event.hostUid);
     
     return (
@@ -17,12 +13,12 @@ export default function EventDetailedHeader() {
                 <div className="flex justify-between">
                     <div>
                         <h2 className="card-title text-4xl">{event?.title}</h2>
-                        <p>{event?.date}</p>
+                        <p>{event.date}</p>
                         <p>Hosted by {host?.displayName}</p>
                     </div>
                     <div className="flex flex-col justify-end">
                         <div className="flex flex-row gap-3">
-                            <Link to={`/manage/${event?.id}`} className="btn btn-secondary">Manage event</Link>
+                            <Link to={`/manage/${event.id}`} className="btn btn-secondary">Manage event</Link>
                             <button className="btn btn-primary">Join event</button>
                         </div>
                     </div>

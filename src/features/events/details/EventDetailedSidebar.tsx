@@ -1,17 +1,16 @@
 import { Fragment } from "react/jsx-runtime";
-import { useAppSelector } from "../../../lib/store/store";
+import type { AppEvent } from "../../../lib/types";
 
-export default function EventDetailedSidebar() {
-    const event = useAppSelector(state => state.event.selectedEvent);
+export default function EventDetailedSidebar({event}: {event: AppEvent}) {
 
     return (
         <div className="card bg-base-100">
             <div className="card-title rounded-t-lg justify-center bg-gradient-to-r from-primary to-black py-2 text-white">
-                {event?.attendees.length} People going
+                {event.attendees.length} People going
             </div>
             <div className="card-body">
                 <div className="flex flex-col gap-3">
-                    {event?.attendees.map((attendee, index) => (
+                    {event.attendees.map((attendee, index) => (
                         <Fragment key={attendee.id}>
                             <div className="flex gap-3 align-middle justify-between items-center">
                                 <div className="flex gap-3 items-center">
