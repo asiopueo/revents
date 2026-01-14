@@ -2,36 +2,14 @@ import EventDetailedHeader from "./EventDetailedHeader";
 import EventDetailedInfo from "./EventDetailedInfo";
 import EventDetailedChat from "./EventDetailedChat";
 import EventDetailedSidebar from "./EventDetailedSidebar";
-import { useAppDispatch, useAppSelector } from "../../../lib/store/store";
 import { useParams } from "react-router";
-import { useCallback, useState, useSyncExternalStore } from "react";
-import { db } from "../../../lib/firebase/firebase";
-import { doc, onSnapshot } from "firebase/firestore";
-import { selectEvent } from "../eventSlice";
-import type { FirestoreAppEvent } from "../../../lib/types";
+import type { AppEvent } from "../../../lib/types";
+import { useDocuments } from "../../../lib/hooks/useDocuments";
 
 export default function EventDetails() {
-    const dispatch = useAppDispatch();
     const { id } = useParams<{ id: string }>();
-    const selectedEvent = useAppSelector(state => state.event.selectedEvent);
-    const [loading, setLoading] = useState(true);
 
-    const listenToEventDetails = useCallback(() => {
-        if (!id) return () => {}; // no-op
-
-        const unsubscribe = onSnapshot(doc(db, 'events', id), (doc) => {
-            if (doc.exists()) {
-                dispatch(selectEvent({...doc.data(), id: doc.id} as FirestoreAppEvent));
-                setLoading(false);
-            } else {
-                setLoading(false);
-            }
-        });
-
-        return () => unsubscribe();
-    }, [id, dispatch]);
-
-    useSyncExternalStore(listenToEventDetails, () => selectedEvent);
+    const { data: selectedEvent, loading } = useDocuments<AppEvent>({path: 'events', id});
 
     if (loading) return <div>Loading...</div>
 
